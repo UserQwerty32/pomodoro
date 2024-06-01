@@ -1,0 +1,87 @@
+﻿-- Создание таблицы "Requests"
+CREATE TABLE Requests (
+    RequestID INT PRIMARY KEY,
+    RequestNumber VARCHAR(50),
+    DateAdded DATE,
+    Equipment VARCHAR(100),
+    FaultType VARCHAR(100),
+    ProblemDescription TEXT,
+    ClientID INT,
+    AssignedTo INT,
+    Status VARCHAR(20)
+);
+
+
+-- Создание таблицы "Clients"
+CREATE TABLE Clients (
+    ClientID INT PRIMARY KEY,
+    ClientName VARCHAR(100),
+    ContactInfo VARCHAR(100)
+);
+
+
+-- Создание таблицы "Employees"
+CREATE TABLE Employees (
+    ID INT PRIMARY KEY,
+    EmployeeName VARCHAR(100),
+    ContactInfo VARCHAR(100)
+);
+
+
+-- Добавление данных в таблицу "Clients"
+INSERT INTO Clients (ClientID, ClientName, ContactInfo) VALUES
+(1, 'Client A', '123-456-7890'),
+(2, 'Client B', '321-654-0987');
+
+
+-- Добавление данных в таблицу "Employees"
+INSERT INTO Employees (ID, EmployeeName, ContactInfo) VALUES
+(1, 'Никита Зверев', '111-222-3333'),
+(2, 'Александр Азимов', '444-555-6666');
+
+
+-- Добавление данных в таблицу "Requests"
+INSERT INTO Requests (RequestID, RequestNumber, DateAdded, Equipment, FaultType, ProblemDescription, ClientID, AssignedTo, Status) VALUES
+(1, 'REQ001', '2022-10-15', 'Принтер', 'Замятие бумаги', 'Принтер не печатает из-за замятия бумаги', 1, 1, '
+В ожидании'), 
+(2, 'REQ002', '2022-10-16', 'Ноутбук', 'Проблема с экраном', 'Экран ноутбука мерцает', 2, 2, 'В ходе выполнения'); 
+
+
+-- Запрос для добавления нового запроса
+INSERT INTO Requests (RequestNumber, DateAdded, Equipment, FaultType, ProblemDescription, ClientID, AssignedTo, Status) VALUES
+('REQ003', '2022-10-17', 'ПК', 'Ошибка загрузки', 'Компьютер не загружается', 1, 1, 'В ожидании'); -- 
+
+
+-- Добавление внешнего ключа для связи "Requests" и "Employees"
+ALTER TABLE Requests
+ADD CONSTRAINT fkEmployees FOREIGN KEY (AssignedTo) REFERENCES Employees(ID);
+
+
+-- Добавление внешнего ключа для связи "Requests" и "Clients"
+ALTER TABLE Requests
+ADD CONSTRAINT fkClients FOREIGN KEY (ClientID) REFERENCES Clients(ClientID);
+
+
+-- Запрос для изменения статуса и описания проблемы в запросе
+UPDATE Requests
+SET Status = 'Завершённый', ProblemDescription = 'Принтер теперь работает после устранения замятия бумаги'
+WHERE RequestID = 1;
+
+
+-- Отображение всех таблиц
+SELECT * FROM Requests;
+SELECT * FROM Clients;
+SELECT 
+    r.RequestNumber,
+    r.DateAdded,
+    r.Equipment,
+    r.FaultType,
+    r.ProblemDescription,
+    c.ClientName,
+    c.ContactInfo AS ClientContact,
+    e.EmployeeName,
+    e.ContactInfo AS EmployeeContact,
+    r.Status
+FROM Requests r
+INNER JOIN Clients c ON r.ClientID = c.ClientID
+INNER JOIN Employees e ON r.AssignedTo = e.ID;
