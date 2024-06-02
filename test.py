@@ -50,7 +50,7 @@ def add_request():
             FaultType,
             ProblemDescription,
             ClientID,
-            AssignedTo,
+            EmployeeID,
             Status
         ) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
