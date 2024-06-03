@@ -109,8 +109,7 @@ def add_request():
         if client_id is None or employee_id is None:
             messagebox.showerror("Ошибка", "Клиент или сотрудник не найдены.")
             return
-
-        # Вставляем новый запрос в базу данных
+            # Вставляем новый запрос в базу данных
         cursor.execute("""
             INSERT INTO Requests (
                 RequestNumber,
@@ -168,9 +167,46 @@ def get_employee_id(employee_name, cursor):
         return result[0]
 
 
+# Функция для открытия основного окна
+def open_main_window():
+    auth_window.withdraw()
+    window.deiconify()
+
+# Функция для возврата к окну авторизации
+def go_back_to_auth():
+    window.withdraw()
+    auth_window.deiconify()
+
+# Создаем окно авторизации
+auth_window = tk.Tk()
+auth_window.title("Авторизация")
+
+login_label = tk.Label(auth_window, text="Логин")
+login_entry = tk.Entry(auth_window)
+
+password_label = tk.Label(auth_window, text="Пароль")
+password_entry = tk.Entry(auth_window, show="*")
+
+def login():
+    # Здесь добавьте вашу логику авторизации
+    username = login_entry.get()
+    password = password_entry.get()
+    if username == "login1" and password == "password1":  # Простая проверка, замените на свою
+        open_main_window()
+    else:
+        messagebox.showerror("Ошибка", "Неверный логин или пароль")
+
+login_button = tk.Button(auth_window, text="Войти", command=login)
+login_label.grid(row=0, column=0)
+login_entry.grid(row=0, column=1)
+password_label.grid(row=1, column=0)
+password_entry.grid(row=1, column=1)
+login_button.grid(row=2, column=1)
+
 # Создаем главное окно
-window = tk.Tk()
+window = tk.Toplevel(auth_window)
 window.title("Helpdesk")
+window.withdraw()  # Скрываем главное окно до успешной авторизации
 
 # Создаем поля ввода
 request_number_label = tk.Label(window, text="Номер заявки")
@@ -200,6 +236,8 @@ status_entry = tk.Entry(window)
 # Создаем кнопку для добавления нового запроса
 add_request_button = tk.Button(window, text="Добавить заявку", command=add_request)
 
+# Создаем кнопку для возврата к окну авторизации
+back_button = tk.Button(window, text="Назад", command=go_back_to_auth)
 # Размещаем виджеты на окне
 request_number_label.grid(row=0, column=0)
 request_number_entry.grid(row=0, column=1)
@@ -226,6 +264,7 @@ status_label.grid(row=7, column=0)
 status_entry.grid(row=7, column=1)
 
 add_request_button.grid(row=8, column=1)
+back_button.grid(row=9, column=1)
 
-# Запускаем главное окно
-window.mainloop()
+# Запускаем окно авторизации
+auth_window.mainloop()
